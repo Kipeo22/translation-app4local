@@ -89,7 +89,7 @@ struct TranslatorView: View {
             }
             ZStack(alignment: .topLeading) {
                 if model.source.isEmpty {
-                    Text("文章を選んで ⌃⌥\(model.shortcutKey)\nここに入力・貼り付けもできます")
+                    Text("文章を選んで \(model.shortcut.symbols)\nここに入力・貼り付けもできます")
                         .font(.system(size: 17)).foregroundStyle(.tertiary)
                         .padding(.top, 8).padding(.leading, 5).allowsHitTesting(false)
                 }
@@ -167,7 +167,7 @@ struct TranslatorView: View {
                     Text("最初の文字 \(model.firstTextTime ?? complete, specifier: "%.1f")秒 · 完了 \(complete, specifier: "%.1f")秒")
                         .font(.system(size: 10)).monospacedDigit().foregroundStyle(.tertiary)
                 } else {
-                    Text("選択して ⌃⌥\(model.shortcutKey)  ·  翻訳 ⌘↩  ·  コピー ⇧⌘C")
+                    Text("選択して \(model.shortcut.symbols)  ·  翻訳 ⌘↩  ·  コピー ⇧⌘C")
                         .font(.system(size: 10)).foregroundStyle(.tertiary)
                 }
             }
@@ -238,8 +238,8 @@ struct TranslatorView: View {
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 Section {
-                    Picker("選択した文章を翻訳", selection: $model.shortcutKey) {
-                        ForEach(["T", "R", "Y"], id: \.self) { Text("Control + Option + \($0)").tag($0) }
+                    Picker("選択した文章を翻訳", selection: $model.shortcut) {
+                        ForEach(ShortcutPreset.allCases) { Text($0.label).tag($0) }
                     }
                     if let error = model.hotkeyError { Text(error).foregroundStyle(.orange) }
                     Toggle("選択を取得できないとき、自動コピーで補助する", isOn: $model.copyFallback)

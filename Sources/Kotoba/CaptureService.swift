@@ -86,12 +86,43 @@ final class CaptureService {
     }
 }
 
+enum ShortcutPreset: String, CaseIterable, Identifiable {
+    case commandJ, controlOptionT, controlOptionR, controlOptionY
+    var id: String { rawValue }
+    var label: String {
+        switch self {
+        case .commandJ: return "Command + J"
+        case .controlOptionT: return "Control + Option + T"
+        case .controlOptionR: return "Control + Option + R"
+        case .controlOptionY: return "Control + Option + Y"
+        }
+    }
+    var symbols: String {
+        switch self {
+        case .commandJ: return "⌘J"
+        case .controlOptionT: return "⌃⌥T"
+        case .controlOptionR: return "⌃⌥R"
+        case .controlOptionY: return "⌃⌥Y"
+        }
+    }
+    var keyCode: UInt32 {
+        switch self {
+        case .commandJ: return UInt32(kVK_ANSI_J)
+        case .controlOptionT: return UInt32(kVK_ANSI_T)
+        case .controlOptionR: return UInt32(kVK_ANSI_R)
+        case .controlOptionY: return UInt32(kVK_ANSI_Y)
+        }
+    }
+    var modifiers: UInt32 {
+        self == .commandJ ? UInt32(cmdKey) : UInt32(controlKey | optionKey)
+    }
+}
+
 @MainActor
 final class GlobalHotkey {
     private var reference: EventHotKeyRef?
     private var handler: EventHandlerRef?
     var onPressed: (() -> Void)?
-    static let keys: [String: UInt32] = ["T": UInt32(kVK_ANSI_T), "R": UInt32(kVK_ANSI_R), "Y": UInt32(kVK_ANSI_Y)]
 
     init() {
         var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyReleased))
@@ -103,12 +134,12 @@ final class GlobalHotkey {
         }, 1, &eventType, Unmanaged.passUnretained(self).toOpaque(), &handler)
     }
 
-    func register(key: String) -> Bool {
+    func register(shortcut: ShortcutPreset) -> Bool {
         if let reference { UnregisterEventHotKey(reference) }
         reference = nil
         let identifier = EventHotKeyID(signature: 0x4B544241, id: 1)
-        return RegisterEventHotKey(Self.keys[key] ?? UInt32(kVK_ANSI_T),
-                                   UInt32(controlKey | optionKey), identifier,
+        return RegisterEventHotKey(shortcut.keyCode,
+                                   shortcut.modifiers, identifier,
                                    GetApplicationEventTarget(), 0, &reference) == noErr
     }
 }

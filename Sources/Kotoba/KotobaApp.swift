@@ -13,6 +13,13 @@ enum KotobaApp {
             return
         }
         let application = NSApplication.shared
+        if CommandLine.arguments.contains("--check-hotkey") {
+            let hotkey = GlobalHotkey()
+            let shortcut = ShortcutPreset.commandJ
+            let registered = hotkey.register(shortcut: shortcut)
+            print("\(shortcut.label): \(registered ? "registered" : "registration failed")")
+            exit(registered ? 0 : 1)
+        }
         let delegate = AppDelegate()
         application.delegate = delegate
         application.setActivationPolicy(.regular)
@@ -33,7 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         buildMenus()
         let view = TranslatorView(model: model, onCapture: { [weak self] in
             guard let self else { return }
-            model.error = "翻訳したいアプリに戻って文章を選択し、Control + Option + \(model.shortcutKey) を押してください。"
+            model.error = "翻訳したいアプリに戻って文章を選択し、\(model.shortcut.label) を押してください。"
             if !capture.trusted { capture.requestPermission() }
         }, onHotkeyChange: { [weak self] in self?.registerHotkey() })
         window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 900, height: 730),
@@ -68,7 +75,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                     "complete": model.isComplete, "source": model.source, "result": model.result,
                     "error": model.error ?? "", "firstTextSeconds": model.firstTextTime ?? -1,
                     "completeSeconds": model.completeTime ?? -1,
-                    "hotkey": model.shortcutKey, "hotkeyError": model.hotkeyError ?? ""
+                    "hotkey": model.shortcut.label, "hotkeyError": model.hotkeyError ?? ""
                 ]
                 if let data = try? JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]) {
                     print(String(decoding: data, as: UTF8.self))
@@ -91,7 +98,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func registerHotkey() {
-        model.hotkeyError = hotkey.register(key: model.shortcutKey) ? nil : "このキーは登録できませんでした。以前の翻訳ショートカットを解除するか、設定で別のキーを選んでください。"
+        model.hotkeyError = hotkey.register(shortcut: model.shortcut) ? nil : "このキーは登録できませんでした。以前の翻訳ショートカットを解除するか、設定で別のキーを選んでください。"
         if let error = model.hotkeyError { model.error = error }
         hotkey.onPressed = { [weak self] in self?.captureAndTranslate() }
     }

@@ -22,7 +22,8 @@ final class AppModel: ObservableObject {
     @Published var saveHistory = UserDefaults.standard.bool(forKey: "saveHistory")
     @Published var copyFallback = UserDefaults.standard.bool(forKey: "copyFallback")
     @Published var showSettings = false
-    @Published var shortcutKey = UserDefaults.standard.string(forKey: "shortcutKey") ?? "T"
+    // New preference key applies the requested Command+J default to existing installations too.
+    @Published var shortcut = ShortcutPreset(rawValue: UserDefaults.standard.string(forKey: "shortcutPreset") ?? "") ?? .commandJ
     @Published var hotkeyError: String?
     @Published var captureInProgress = false
     @Published var copied = false
@@ -159,7 +160,7 @@ final class AppModel: ObservableObject {
         defaults.set(fontSize, forKey: "fontSize")
         defaults.set(saveHistory, forKey: "saveHistory")
         defaults.set(copyFallback, forKey: "copyFallback")
-        defaults.set(shortcutKey, forKey: "shortcutKey")
+        defaults.set(shortcut.rawValue, forKey: "shortcutPreset")
     }
 
     private var historyURL: URL {

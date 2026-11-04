@@ -7,7 +7,7 @@
 - SwiftUI + AppKit、macOS 26以降、Apple Silicon。
 - 翻訳はFoundation ModelsのSystemLanguageModel。文章ごとに独立したセッションを使い、ストリーミングの累積スナップショットを専用ウィンドウへ反映する。
 - 任意でOllamaのローカルChat APIに対応。推論モデルの導入は自動で行わない。
-- Control+Option+T（設定でR／Yに変更可能）で選択テキストを取得。Carbonの登録型ホットキーを使い、通常のキー入力は監視しない。
+- Command+Jで選択テキストを取得（ユーザー指定により初期のControl+Option+Tから変更）。設定でControl+Option+T／R／Yにも変更可能。Carbonの登録型ホットキーを使い、通常のキー入力は監視しない。
 - AXUIElementでの選択取得、任意の自動コピー補助、NSPasteboardからの手動貼り付け、NSServiceの受信経路。
 - 900×730ptを初期値にしたリサイズ可能なウィンドウ。訳文は初期21pt、16〜32ptで調整可能。
 - 翻訳の中断、完了判定、エラー表示、コピー、モデル待ち時間の計測。
