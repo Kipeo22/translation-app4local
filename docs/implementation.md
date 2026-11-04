@@ -10,6 +10,7 @@
 - Command+Jで選択テキストを取得（ユーザー指定により初期のControl+Option+Tから変更）。設定でControl+Option+T／R／Yにも変更可能。Carbonの登録型ホットキーを使い、通常のキー入力は監視しない。
 - AXUIElementでの選択取得、任意の自動コピー補助、NSPasteboardからの手動貼り付け、NSServiceの受信経路。
 - 900×730ptを初期値にしたリサイズ可能なウィンドウ。訳文は初期21pt、16〜32ptで調整可能。
+- 呼び出し元のデスクトップへウィンドウを移動するよう、`moveToActiveSpace`を指定。`fullScreenAuxiliary`も指定し、ウィンドウのアクティブ化時に以前のデスクトップへ切り替わる動作を修正した（2026-11-05）。
 - 翻訳の中断、完了判定、エラー表示、コピー、モデル待ち時間の計測。
 - UserDefaultsで設定を保存。履歴は初期オフ、有効時のみApplication Support/Kotoba/history.jsonへ最大500件保存。
 - 外部パッケージ・Web UI・外部APIキーなし。
@@ -30,9 +31,12 @@ UI調整後に同じ短文で再確認した結果、最初の文字0.92秒・�
 
 これは同じ短文を2回使った動作検証。一般的な翻訳精度、速度分布、Naniや元のショートカットに対する優位性を示す評価ではない。OSの権限が必要な他アプリからの選択取得は、ユーザーの許可後に確認する。
 
+2026-11-05のSpaces修正は、リリースビルド・署名検証・プレビュー起動と画面画像の出力を確認した。複数のデスクトップを実際に切り替えての呼び出しと、他アプリのフルスクリーン上での表示は未検証。
+
 ## 参照
 
 - [Apple: LanguageModelSession](https://developer.apple.com/documentation/foundationmodels/languagemodelsession)
 - [Apple: 途中生成のスナップショット](https://developer.apple.com/documentation/foundationmodels/languagemodelsession/responsestream)
 - [Apple: Private Cloud Computeの追加条件](https://developer.apple.com/documentation/foundationmodels/adding-server-side-intelligence-with-private-cloud-compute)
 - [Ollama: Chat API](https://docs.ollama.com/api/chat)
+- [Apple: moveToActiveSpace](https://developer.apple.com/documentation/appkit/nswindow/collectionbehavior-swift.struct/movetoactivespace)

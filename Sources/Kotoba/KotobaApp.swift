@@ -49,6 +49,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         window.title = "ことば"
         window.minSize = NSSize(width: 650, height: 560)
         window.isReleasedWhenClosed = false
+        // Bring the window to the caller's Space instead of activating its previous desktop.
+        window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
         window.delegate = self
         window.contentView = NSHostingView(rootView: view)
         window.setFrameAutosaveName("KotobaMainWindow")
