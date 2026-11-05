@@ -1,11 +1,30 @@
 # ことば / Kotoba
 
-選択した文章を日英翻訳する、個人用のMacネイティブアプリです。小さな結果ポップアップを使わず、サイズ変更できる専用ウィンドウに原文と訳文を表示します。
+選択した文章を日英翻訳するMacネイティブアプリです。Apple Intelligenceのオンデバイスモデル、または任意のOllamaローカルモデルを使い、サイズ変更できる専用ウィンドウに原文と訳文を表示します。
+
+## 必要な環境
+
+- Apple Silicon搭載Mac、macOS 26以降。
+- ビルドにはSwift 6.2系コンパイラとmacOS 26対応SDKが必要です。Xcode 26.3 / Swift 6.2.4で確認しています。
+- 標準エンジンを使う場合は、Apple Intelligenceを有効にし、オンデバイスモデルの準備を完了してください。任意のOllamaエンジンを使う場合は、Ollama本体とローカルモデルを別途用意します。
+
+アプリのソースコードを提供しています。モデルの重みや公証済みの配布アプリは含みません。初回の開発環境・モデルのセットアップにはネット接続が必要です。
+
+## ソースからビルド
+
+```sh
+git clone https://github.com/Kipeo22/translation-app4local.git
+cd translation-app4local
+zsh scripts/build-app.sh
+open dist/Kotoba.app
+```
+
+`dist/Kotoba.app`を生成し、アドホック署名を付けます。Developer ID証明書は不要です。コンパイラやSDKが見つからない場合は、`xcode-select -p`と`xcrun swift --version`で、使用する開発環境を確認してください。
 
 ## 起動
 
 1. `dist/Kotoba.app` を開きます。
-2. 初期エンジンはApple Intelligenceのオンデバイスモデルです。Apple Intelligenceが有効なmacOS 26以降のMacが必要です。
+2. 初期エンジンはApple Intelligenceのオンデバイスモデルです。利用できない場合は、設定から導入済みのOllamaローカルモデルに変更できます。
 3. 手入力・貼り付けの場合は、原文を入力し「翻訳する」またはCommand+Returnを押します。
 4. 他アプリの選択文章を取得する場合は、システム設定 → プライバシーとセキュリティ → アクセシビリティで「ことば」（またはKotoba）を許可します。
 5. 元のアプリで文章を選び、Command+Jを押します。
@@ -51,9 +70,17 @@ Accessibility APIに対応しないアプリでは、設定の「選択を取得
 
 Appleのショートカットで選べるクラウド／Cloud Proと同じモデルを、現在のアプリで直接使う機能はありません。AppleのPrivate Cloud Computeを独自アプリから使う場合の追加条件と、手元のSDKの対応状況を確認し、初版はオンデバイスで実装しています。外部APIの契約やAPIキーは不要です。
 
+## データの取り扱い
+
+- 標準エンジンはFoundation Modelsのオンデバイス推論を使います。Ollama利用時の接続先は`http://127.0.0.1:11434/api/chat`です。アプリに解析・広告・クラッシュ報告の送信処理はありません。
+- Ollama側の実行設定・モデルの取得・更新はOllama本体の管理範囲です。ローカルで動くモデルを使用してください。
+- 履歴保存は初期オフです。有効にすると原文と訳文などを`~/Library/Application Support/Kotoba/history.json`へ最大500件保存します。アプリ独自の暗号化は行いません。保存をオフにしても既存の履歴は残るため、消したい場合は設定の「保存した履歴をすべて削除」を使ってください。
+- 設定はUserDefaultsに保存します。クリップボードの常時監視は行いません。選択取得と任意のコピー補助は、ユーザーが呼び出したときに動作します。
+- 不具合報告に原文・訳文・履歴・画面画像を添付する場合は、個人情報や機密情報を取り除いてください。
+
 ## 開発
 
-外部パッケージは使っていません。Swift 6.2系コンパイラ、macOS 26対応SDKでビルド確認済み。Swiftの言語モードは5です。
+外部パッケージは使っていません。Swiftの言語モードは5です。
 
 ```sh
 zsh scripts/build-app.sh
@@ -62,14 +89,23 @@ swift test --cache-path .build/package-cache
 
 ビルドすると`dist/Kotoba.app`を作り、個人用のアドホック署名を付けます。公証済みの配布アプリではありません。同じ保存場所・バンドルIDで使うことを推奨します。再ビルド後にmacOSがアクセシビリティの再許可を求める場合があります。
 
-## 検証状況
+コードの読み方、不具合報告、変更の検証手順は[CONTRIBUTING.md](CONTRIBUTING.md)を参照してください。
+
+## 検証状況と制約
+
+以下の実機翻訳・速度は初期開発時の確認記録です。環境が変わった場合の動作や品質を保証するものではありません。
 
 - リリースビルド成功。
 - 言語判定、Ollamaの途中受信、切断・エラー・出力上限・空結果に関する6テスト成功。
 - Apple Intelligenceでテスト用英文の実翻訳と、アプリ自身の画面画像を確認。
 - 同じ短文を2回確認し、1回目は最初の文字約1.3秒・完了約1.4秒、2回目は最初の文字約0.9秒・完了約0.9秒を計測。一般的な速度の保証や、元のショートカット・Naniとの比較結果ではありません。
-- 2回目のレポートは`artifacts/translation-smoke.json`、実際の表示は`artifacts/translation-smoke.png`。Control+Option+Tのキー登録も成功しました。
+- 2回目のレポートは`artifacts/translation-smoke.json`、実際の表示は`artifacts/translation-smoke.png`に開発時に保存しました。これらはGit管理対象外で、このリポジトリには含みません。Control+Option+Tのキー登録も成功しました。
 - 他アプリの選択取得・自動コピー補助・サービスメニュー・履歴・Ollama実翻訳・ログイン時自動起動は、同じ検証レベルではありません。選択取得の実機確認にはユーザーによるアクセシビリティ許可が必要です。
-- ログイン時自動起動とOCRは未実装です。
+- 複数デスクトップ間と他アプリのフルスクリーン上での呼び出しは、実機での動作確認が未完了です。
+- ログイン時自動起動、OCR、長文分割は未実装です。
 
-元の仕様案は `docs/specification.md`、今回の採用内容は `docs/implementation.md` にあります。
+元の仕様案は[docs/specification.md](docs/specification.md)、現在の採用内容は[docs/implementation.md](docs/implementation.md)にあります。仕様案には未実装の提案も含まれます。
+
+## ライセンス
+
+このリポジトリのコードとドキュメントは[MIT License](LICENSE)で提供します。Appleのフレームワーク、Ollama本体、別途取得するモデルには、それぞれのライセンス・利用条件が適用されます。

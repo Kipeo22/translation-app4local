@@ -3,3 +3,16 @@ dist/
 .DS_Store
 .swiftpm/
 artifacts/
+
+# Local configuration and signing material
+.env
+.env.*
+!.env.example
+*.p12
+*.pfx
+*.pem
+*.key
+*.mobileprovision
+*.provisionprofile
+xcuserdata/
+*.xcuserstate
