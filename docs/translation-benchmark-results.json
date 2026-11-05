@@ -1,0 +1,246 @@
+{
+  "measured_dates": "2026-11-05 / 2026-11-06 JST",
+  "environment": {
+    "cpu": "Apple M4 Pro",
+    "memory_bytes": 51539607552,
+    "os": "macOS 27.2 (26B123)",
+    "app_commit": "338e7464388e3aaca4f89a6bc340fad9a06d4aa5",
+    "llama_build": "b12125",
+    "llama_commit": "7d516e25e",
+    "context": 8192,
+    "gpu_layers": 99,
+    "slots": 1,
+    "temperature": 0.1,
+    "seed": 42,
+    "output_limit": 1024
+  },
+  "metric": {
+    "name": "Unbabel/wmt22-comet-da",
+    "revision": "2760a223ac957f30acfb18c8aa649b01cf1d75f2",
+    "runtime": "CPU float32, batch_size=8, num_workers=1"
+  },
+  "samples": {
+    "seed": 20261105,
+    "per_dataset": 100,
+    "wmt24_total": 998,
+    "wmt24_eligible": 960,
+    "wmt20_total": 993,
+    "wmt20_source_sha256": "7d9015cc4f44b05af0ecc84379fcf7ceda0b37696cc28baae1e169e800858b4c",
+    "wmt20_reference_sha256": "eaee29be127dfab3582d1dc2f059a5373a8f925210d912f67638c9ed97839295",
+    "wmt24_sha256": "58bbee69aed537d21e25f04c5eaf49c2c7aef1b1dddb918f6eac424ab93c7ec8",
+    "wmt23_total": 1992,
+    "wmt23_source_sha256": "0f396a205c49006893a1c9f1d7ba34414ad9f382962749ac535263d752d6d7f9",
+    "wmt23_reference_sha256": "fcc9be4f5d84751cb08e08682c61bfbfc4ffcd07ccef0e3f76a0c748a00ef0e8",
+    "samples_sha256": "f9f5b979af8fec41b1070dd4a61baaf53d74c5885dcd08b7bf75fc5d684b2adf"
+  },
+  "models": [
+    {
+      "repo": "pfnet/plamo-3-translate-2b-GGUF",
+      "revision": "f2b4599dff9b3e45c62567eac15e83186b4cb64e",
+      "filename": "plamo-3-translate-2b-Q4_K_M.gguf",
+      "bytes": 1807192480,
+      "sha256": "2c288ecc7ebfe60c3561726580da3583767f3c41ca3ef5c6825bf6c4cc060787"
+    },
+    {
+      "repo": "bullerwins/translategemma-12b-it-GGUF",
+      "revision": "d7d1d8cc4ff53d4bc883ef33eae3894f07833b63",
+      "filename": "translategemma-12b-it-Q4_K_M.gguf",
+      "bytes": 7300793664,
+      "sha256": "9196d728812afbf5efc10b539298585725edc3a4ecc092c22fdde5bbaf41879e"
+    }
+  ],
+  "integrity": [
+    {
+      "model": "plamo-2b.gguf",
+      "sha256": "2c288ecc7ebfe60c3561726580da3583767f3c41ca3ef5c6825bf6c4cc060787",
+      "matched": true
+    },
+    {
+      "model": "gemma-12b.gguf",
+      "sha256": "9196d728812afbf5efc10b539298585725edc3a4ecc092c22fdde5bbaf41879e",
+      "matched": true
+    }
+  ],
+  "template_validation": {
+    "samples": 300,
+    "match": true
+  },
+  "results": {
+    "models": {
+      "apple-intelligence": {
+        "wmt24pp-en-ja": {
+          "n": 100,
+          "failures": 14,
+          "chrf_pp": 26.54144827442601,
+          "first_text_seconds_median": 0.9563339352607727,
+          "first_text_seconds_p95": 1.288735032081604,
+          "total_seconds_median": 1.0661375522613525,
+          "total_seconds_p95": 3.0626959800720215,
+          "comet_all": 0.7923921662569046,
+          "comet_success_only": 0.8516566295956456
+        },
+        "wmt23-ja-en": {
+          "n": 100,
+          "failures": 5,
+          "chrf_pp": 43.94774950814154,
+          "first_text_seconds_median": 0.5826200246810913,
+          "first_text_seconds_p95": 0.9504250288009644,
+          "total_seconds_median": 0.5868740081787109,
+          "total_seconds_p95": 1.2586270570755005,
+          "comet_all": 0.8026372098922729,
+          "comet_success_only": 0.81761113091519
+        },
+        "wmt20-ja-en": {
+          "n": 100,
+          "failures": 7,
+          "chrf_pp": 45.105082805175556,
+          "first_text_seconds_median": 0.8191760778427124,
+          "first_text_seconds_p95": 1.1058080196380615,
+          "total_seconds_median": 0.870366096496582,
+          "total_seconds_p95": 1.7381759881973267,
+          "comet_all": 0.8032698285579681,
+          "comet_success_only": 0.8205775791598905
+        }
+      },
+      "plamo-2b": {
+        "wmt24pp-en-ja": {
+          "n": 100,
+          "failures": 0,
+          "chrf_pp": 33.387442441522644,
+          "first_text_seconds_median": 0.07012670850235736,
+          "first_text_seconds_p95": 0.14256066600501072,
+          "total_seconds_median": 0.29416874950402416,
+          "total_seconds_p95": 0.9917692919989349,
+          "comet_all": 0.8731593865156174,
+          "comet_success_only": 0.8731593865156174
+        },
+        "wmt23-ja-en": {
+          "n": 100,
+          "failures": 0,
+          "chrf_pp": 47.49779462329751,
+          "first_text_seconds_median": 0.05690912499994738,
+          "first_text_seconds_p95": 0.0795464999973774,
+          "total_seconds_median": 0.1860136460090871,
+          "total_seconds_p95": 0.42317133299366105,
+          "comet_all": 0.8361246436834335,
+          "comet_success_only": 0.8361246436834335
+        },
+        "wmt20-ja-en": {
+          "n": 100,
+          "failures": 0,
+          "chrf_pp": 48.61369426526602,
+          "first_text_seconds_median": 0.06177414650301216,
+          "first_text_seconds_p95": 0.09221670900296886,
+          "total_seconds_median": 0.30525014600425493,
+          "total_seconds_p95": 0.5922510419914033,
+          "comet_all": 0.8272173690795899,
+          "comet_success_only": 0.8272173690795899
+        }
+      },
+      "gemma-12b": {
+        "wmt24pp-en-ja": {
+          "n": 100,
+          "failures": 0,
+          "chrf_pp": 29.25702179072351,
+          "first_text_seconds_median": 0.5378304579935502,
+          "first_text_seconds_p95": 0.9446612500032643,
+          "total_seconds_median": 1.8945359165008995,
+          "total_seconds_p95": 5.398398166988045,
+          "comet_all": 0.874317644238472,
+          "comet_success_only": 0.874317644238472
+        },
+        "wmt23-ja-en": {
+          "n": 100,
+          "failures": 0,
+          "chrf_pp": 45.95481531750612,
+          "first_text_seconds_median": 0.5295467499963706,
+          "first_text_seconds_p95": 0.7115282919985475,
+          "total_seconds_median": 1.1884884580067592,
+          "total_seconds_p95": 2.404469874993083,
+          "comet_all": 0.829383904337883,
+          "comet_success_only": 0.829383904337883
+        },
+        "wmt20-ja-en": {
+          "n": 100,
+          "failures": 0,
+          "chrf_pp": 47.67380773687211,
+          "first_text_seconds_median": 0.5645658544963226,
+          "first_text_seconds_p95": 0.7366926250106189,
+          "total_seconds_median": 1.6721043750003446,
+          "total_seconds_p95": 3.336686541006202,
+          "comet_all": 0.8308034873008728,
+          "comet_success_only": 0.8308034873008728
+        }
+      }
+    },
+    "paired_comet": {
+      "plamo-2b_minus_apple-intelligence_wmt24pp": {
+        "n": 86,
+        "paired_successful_only": true,
+        "mean_difference": 0.02194858429043792,
+        "bootstrap_95ci": [
+          0.000448086234026177,
+          0.04058395360791406
+        ],
+        "higher_sentence_scores": 66,
+        "lower_sentence_scores": 19
+      },
+      "plamo-2b_minus_apple-intelligence_wmt23": {
+        "n": 95,
+        "paired_successful_only": true,
+        "mean_difference": 0.021860827897724353,
+        "bootstrap_95ci": [
+          0.00758008454975329,
+          0.03646011038830406
+        ],
+        "higher_sentence_scores": 58,
+        "lower_sentence_scores": 32
+      },
+      "plamo-2b_minus_apple-intelligence_wmt20": {
+        "n": 93,
+        "paired_successful_only": true,
+        "mean_difference": 0.009000373783931937,
+        "bootstrap_95ci": [
+          0.0007833966644861365,
+          0.016533663836858607
+        ],
+        "higher_sentence_scores": 61,
+        "lower_sentence_scores": 32
+      },
+      "plamo-2b_minus_gemma-12b_wmt24pp": {
+        "n": 100,
+        "paired_successful_only": true,
+        "mean_difference": -0.0011582577228546143,
+        "bootstrap_95ci": [
+          -0.01780942976474762,
+          0.013388723134994507
+        ],
+        "higher_sentence_scores": 57,
+        "lower_sentence_scores": 42
+      },
+      "plamo-2b_minus_gemma-12b_wmt23": {
+        "n": 100,
+        "paired_successful_only": true,
+        "mean_difference": 0.006740739345550537,
+        "bootstrap_95ci": [
+          -0.0027315086126327515,
+          0.01573105275630951
+        ],
+        "higher_sentence_scores": 55,
+        "lower_sentence_scores": 42
+      },
+      "plamo-2b_minus_gemma-12b_wmt20": {
+        "n": 100,
+        "paired_successful_only": true,
+        "mean_difference": -0.003586118221282959,
+        "bootstrap_95ci": [
+          -0.013327693939208985,
+          0.005478370785713196
+        ],
+        "higher_sentence_scores": 54,
+        "lower_sentence_scores": 45
+      }
+    },
+    "chrf_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0"
+  }
+}
