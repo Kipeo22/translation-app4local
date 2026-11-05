@@ -1,0 +1,39 @@
+name: 不具合報告
+description: 再現手順と利用環境を添えて報告する
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        原文・訳文・ログ・画面画像の個人情報や機密情報を取り除いてください。
+        再現用の文章は公開できるダミーを使ってください。
+  - type: textarea
+    id: environment
+    attributes:
+      label: 利用環境
+      description: macOS、対象コミット、翻訳エンジン。ビルドの問題ではXcode / Swift、Ollamaの場合は本体バージョンとモデル名も記載してください。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      description: 選択取得の問題では、対象アプリ、権限状態、直接取得・コピー補助・サービスのどの経路かも記載してください。
+      placeholder: |
+        1. …
+        2. …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待した動作
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の動作
+      description: エラー文があれば、機密情報を除いて記載してください。
+    validations:
+      required: true
