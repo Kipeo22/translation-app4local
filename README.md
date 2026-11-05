@@ -2,7 +2,7 @@
 
 **文章を選んで⌘J。Mac上で動く日英翻訳アプリです。**
 
-Apple Intelligenceのオンデバイスモデル、またはOllamaのローカルモデルで翻訳します。原文と訳文を専用ウィンドウに表示し、外部APIの契約やAPIキーは不要です。
+PLaMo 3 Translate 2BをMac内で動かして翻訳します。Apple IntelligenceとOllamaも選択できます。原文と訳文を専用ウィンドウに表示し、外部APIの契約やAPIキーは不要です。
 
 - 日本語 → 英語、英語 → 日本語に対応。翻訳方向は自動判定・手動指定できます。
 - 他アプリの選択文章、手入力、貼り付け、クリップボードから翻訳できます。
@@ -15,8 +15,8 @@ Apple Intelligenceのオンデバイスモデル、またはOllamaのローカ�
 | --- | --- |
 | Mac | Apple Silicon搭載、macOS 26以降 |
 | ビルド環境 | Swift 6.2系以降、macOS 26対応SDK。Xcode 26.3 / Swift 6.2.4で確認済み |
-| 標準の翻訳エンジン | Apple Intelligenceを有効にし、オンデバイスモデルの準備を完了 |
-| 任意の翻訳エンジン | 別途導入したOllamaとローカルモデル |
+| 標準の翻訳エンジン | PLaMo 3 Translate 2B。初回に約1.83 GBをダウンロード、空き容量3 GB以上が目安 |
+| 任意の翻訳エンジン | Apple Intelligenceのオンデバイスモデル、または別途導入したOllamaとローカルモデル |
 
 ソースコードからビルドして利用します。公証済みの配布アプリやモデルの重みは含みません。初回の開発環境・モデルのセットアップにはネット接続が必要です。
 
@@ -35,7 +35,11 @@ open dist/Kotoba.app
 
 ### 2. 文章を翻訳する
 
-原文欄に入力・貼り付けし、**「翻訳する」または⌘Return**を押します。初期エンジンはApple Intelligenceです。Ollamaを使う場合は、設定でエンジンと導入済みのモデル名を選んでください。初期モデル名は`translategemma:12b`です。
+設定で**「PLaMo 3」→「ダウンロードして準備」**を選びます。モデルとllama.cppを取得・検証し、「準備完了」と表示されたら利用できます。以後はネット接続なしで翻訳でき、実行環境の起動・終了はアプリが管理します。
+
+原文欄に入力・貼り付けし、**「翻訳する」または⌘Return**を押します。新規利用時の初期エンジンはPLaMo 3です。以前に保存したエンジン設定は維持されるため、既存ユーザーは画面上部または設定で切り替えてください。
+
+Apple Intelligenceを使う場合はOS側で有効化とモデルの準備が必要です。Ollamaの場合は導入済みのモデル名を設定します（初期値 `translategemma:12b`）。PLaMoの導入先・利用条件・対処方法は[導入ガイド](docs/plamo.md)を参照してください。
 
 ### 3. 他アプリの選択文章を翻訳する
 
@@ -60,7 +64,7 @@ open dist/Kotoba.app
 
 ## データとプライバシー
 
-- **翻訳処理**：Apple Intelligenceはオンデバイス推論を使います。Ollamaの接続先は`127.0.0.1:11434`です。Ollama側のモデル・実行設定・更新は別途管理してください。
+- **翻訳処理**：PLaMoはアプリ専用のllama.cppに`127.0.0.1`で接続し、原文・訳文を外部に送りません。初回のファイル取得先はHugging FaceとGitHubです。Apple Intelligenceもオンデバイス推論を使います。Ollamaの接続先は`127.0.0.1:11434`です。
 - **履歴**：初期オフ。有効にすると原文・訳文などを`~/Library/Application Support/Kotoba/history.json`へ最大500件保存します。アプリ独自の暗号化は行いません。
 - **履歴の削除**：保存をオフにしても既存データは残ります。設定の「保存した履歴をすべて削除」で削除できます。
 - **取得と通信**：クリップボードの常時監視は行いません。任意の自動コピー補助は初期オフです。アプリに解析・広告・クラッシュ報告の送信処理はありません。
@@ -86,4 +90,4 @@ zsh scripts/check.sh
 
 ## ライセンス
 
-コードとドキュメントは[MIT License](LICENSE)で提供します。Appleのフレームワーク、Ollama本体、別途取得するモデルには、それぞれのライセンス・利用条件が適用されます。
+コードとドキュメントは[MIT License](LICENSE)で提供します。PLaMoモデルは[PLaMoコミュニティライセンス](https://huggingface.co/pfnet/plamo-3-translate-2b-GGUF/blob/f2b4599dff9b3e45c62567eac15e83186b4cb64e/LICENSE/ja)、llama.cppは[MIT License](https://github.com/ggml-org/llama.cpp/blob/b12125/LICENSE)です。Appleのフレームワーク、Ollama本体、別途取得するモデルにも、それぞれの利用条件が適用されます。
