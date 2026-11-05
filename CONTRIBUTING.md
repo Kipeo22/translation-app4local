@@ -9,7 +9,9 @@
 | `Sources/Kotoba/KotobaApp.swift` | 起動、ウィンドウ、メニューバー、サービス、選択翻訳の呼び出し |
 | `Sources/Kotoba/TranslatorView.swift` | 原文・訳文、設定、履歴の画面 |
 | `Sources/Kotoba/AppModel.swift` | 翻訳の実行状態、設定、履歴の保存 |
-| `Sources/Kotoba/TranslationEngine.swift` | Foundation ModelsとOllamaによる翻訳 |
+| `Sources/Kotoba/TranslationEngine.swift` | PLaMo・Foundation Models・Ollamaによる翻訳 |
+| `Sources/Kotoba/PlamoInstallation.swift` | PLaMo・llama.cppの取得とSHA-256検証 |
+| `Sources/Kotoba/PlamoRuntime.swift` | 専用サーバーの起動停止・PFML3・ストリーム検証 |
 | `Sources/Kotoba/TranslationCore.swift` | 翻訳方向の判定、Ollamaのストリーム処理 |
 | `Sources/Kotoba/CaptureService.swift` | Accessibility、コピー補助、グローバルショートカット |
 | `Tests/KotobaTests/TranslationCoreTests.swift` | 言語判定とストリーム処理の自動テスト |
@@ -53,7 +55,7 @@ git switch -c feat/short-description
 zsh scripts/check.sh
 ```
 
-6件の自動テスト、リリースビルド、Info.plistの構文検査、アドホック署名の検証をまとめて実行します。`dist/Kotoba.app`を再生成するため、使用中のアプリを更新したくない場合は別のチェックアウトで実行してください。アプリの起動、実モデルの翻訳、モデルのダウンロードは行いません。
+14件の自動テスト（実モデル統合テストは通常スキップ）、リリースビルド、Info.plistの構文検査、アドホック署名の検証をまとめて実行します。`dist/Kotoba.app`を再生成するため、使用中のアプリを更新したくない場合は別のチェックアウトで実行してください。アプリの起動、実モデルの翻訳、モデルのダウンロードは行いません。実モデルの確認手順は[PLaMo導入ガイド](docs/plamo.md#開発者向けの実機確認)を参照してください。
 
 自動テストは言語判定とOllama応答の処理を対象にしており、実モデルの翻訳品質やOS権限を検証しません。画面・選択取得・クリップボード・履歴・Spacesに関わる変更は、該当操作を実機でも確認してください。確認できない項目は未確認と記載します。実モデルの比較では、原文、モデル、実行環境を揃え、単発の速度を一般的な性能として扱わないでください。
 

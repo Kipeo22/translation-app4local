@@ -4,6 +4,13 @@ import FoundationModels
 @MainActor
 final class TranslationEngine {
     private var warmedSession: LanguageModelSession?
+    let plamoRuntime: PlamoRuntime
+
+    init(plamoInstallation: PlamoInstallation = .init()) {
+        plamoRuntime = PlamoRuntime(installation: plamoInstallation)
+    }
+
+    func shutdown() { plamoRuntime.stop(); warmedSession = nil }
 
     var availabilityMessage: String? {
         switch SystemLanguageModel.default.availability {
@@ -52,9 +59,43 @@ final class TranslationEngine {
             guard !result.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                 throw TranslationFailure.empty
             }
+        } else if kind == .plamo {
+            try await translateWithPlamo(source: source, target: target, update: update)
         } else {
             try await translateWithOllama(source: source, target: target, model: model, update: update)
         }
+    }
+
+    private func translateWithPlamo(source: String, target: String,
+                                    update: @escaping @MainActor (String) -> Void) async throws {
+        let prompt = try PlamoPrompt.translation(source, target: target)
+        let connection = try await plamoRuntime.session()
+        let payload: [String: Any] = [
+            "model": connection.model, "prompt": prompt, "stream": true,
+            "temperature": 0.1, "seed": 42, "max_tokens": 4096, "cache_prompt": false,
+            "stop": ["<|plamo:tag|>", "<|plamo:bos|>"]
+        ]
+        var request = URLRequest(url: connection.baseURL.appendingPathComponent("v1/completions"))
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(connection.apiKey)", forHTTPHeaderField: "Authorization")
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+        request.timeoutInterval = 180
+        let session = URLSession(configuration: .ephemeral)
+        defer { session.invalidateAndCancel() }
+        let (bytes, response) = try await session.bytes(for: request)
+        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+            throw PlamoError.server("原文を短くして再試行してください。")
+        }
+        var accumulator = PlamoAccumulator()
+        for try await line in bytes.lines {
+            try Task.checkCancellation()
+            try accumulator.consume(line)
+            update(accumulator.text)
+            if accumulator.streamEnded { break }
+        }
+        try Task.checkCancellation()
+        try accumulator.validateCompletion()
     }
 
     private func translateWithOllama(source: String, target: String, model: String,

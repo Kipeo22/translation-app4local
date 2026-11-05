@@ -59,14 +59,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         NSUpdateDynamicServices()
 
         let preview = CommandLine.arguments.contains("--preview")
+        let smokePlamo = CommandLine.arguments.contains("--smoke-test-plamo")
         if preview {
             model.loadPreview()
-        } else {
+        } else if !smokePlamo {
             registerHotkey()
         }
+        if smokePlamo {
+            model.previewMode = true // Smoke runs must not change saved preferences or history.
+            model.engineKind = .plamo
+        }
         showWindow()
-        if !preview { model.engine.prewarm() }
-        if CommandLine.arguments.contains("--smoke-test") {
+        if !preview, model.engineKind == .apple { model.engine.prewarm() }
+        if CommandLine.arguments.contains("--smoke-test") || smokePlamo {
             model.editSource("Please do not share this document until Friday. The budget is 250 dollars.")
             model.direction = .toJapanese
             model.translate()
@@ -75,6 +80,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 while model.isRunning { try? await Task.sleep(for: .milliseconds(100)) }
                 let report: [String: Any] = [
                     "complete": model.isComplete, "source": model.source, "result": model.result,
+                    "engine": model.engineKind.rawValue,
                     "error": model.error ?? "", "firstTextSeconds": model.firstTextTime ?? -1,
                     "completeSeconds": model.completeTime ?? -1,
                     "hotkey": model.shortcut.label, "hotkeyError": model.hotkeyError ?? ""
@@ -116,6 +122,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        model.stop()
+        model.plamoInstaller.cancel()
+        model.engine.shutdown()
+    }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         model.stop()

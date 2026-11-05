@@ -23,6 +23,7 @@ enum TranslationDirection: String, CaseIterable, Identifiable {
 }
 
 enum EngineKind: String, CaseIterable, Identifiable {
+    case plamo = "PLaMo 3"
     case apple = "Apple Intelligence"
     case ollama = "Ollama"
     var id: String { rawValue }

@@ -7,7 +7,15 @@ final class AppModel: ObservableObject {
     @Published var source = ""
     @Published var result = ""
     @Published var direction = TranslationDirection.automatic
-    @Published var engineKind = EngineKind(rawValue: UserDefaults.standard.string(forKey: "engine") ?? "") ?? .apple
+    @Published var engineKind = EngineKind(rawValue: UserDefaults.standard.string(forKey: "engine") ?? "") ?? .plamo {
+        didSet {
+            guard oldValue != engineKind else { return }
+            stop()
+            if engineKind != .plamo { engine.plamoRuntime.stop() }
+            if engineKind == .apple, !previewMode { engine.prewarm() }
+            persistSettings()
+        }
+    }
     @Published var ollamaModel = UserDefaults.standard.string(forKey: "ollamaModel") ?? "translategemma:12b"
     @Published var fontSize = UserDefaults.standard.double(forKey: "fontSize") == 0 ? 21 : UserDefaults.standard.double(forKey: "fontSize")
     @Published var isRunning = false
@@ -28,17 +36,28 @@ final class AppModel: ObservableObject {
     @Published var captureInProgress = false
     @Published var copied = false
     var previewMode = false
-    let engine = TranslationEngine()
+    let engine: TranslationEngine
+    let plamoInstaller: PlamoInstaller
     private var work: Task<Void, Never>?
     private var requestID: UUID?
     private var copyReset: Task<Void, Never>?
 
-    init() { loadHistory() }
+    init(plamoInstallation: PlamoInstallation = .init()) {
+        engine = TranslationEngine(plamoInstallation: plamoInstallation)
+        plamoInstaller = PlamoInstaller(installation: plamoInstallation)
+        loadHistory()
+    }
 
     func translate() {
         let text = source.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
         stop()
+        if engineKind == .plamo, !plamoInstaller.isReady {
+            error = plamoInstaller.isInstalling ? "PLaMoの準備が終わるまでお待ちください。" : PlamoError.notInstalled.localizedDescription
+            status = "PLaMoの準備が必要です"
+            showSettings = true
+            return
+        }
         guard let target = direction.target(for: text) else {
             error = TranslationFailure.ambiguousLanguage.localizedDescription
             status = "翻訳先を選択してください"
@@ -48,7 +67,12 @@ final class AppModel: ObservableObject {
         requestID = id
         let selectedEngine = engineKind
         let selectedModel = ollamaModel
-        let engineLabel = selectedEngine == .apple ? "Apple Intelligence・オンデバイス" : selectedModel
+        let engineLabel: String
+        switch selectedEngine {
+        case .apple: engineLabel = "Apple Intelligence・オンデバイス"
+        case .plamo: engineLabel = "PLaMo 3 Translate 2B・オンデバイス"
+        case .ollama: engineLabel = selectedModel
+        }
         result = ""
         error = nil
         copied = false
@@ -58,7 +82,7 @@ final class AppModel: ObservableObject {
         let start = Date()
         startedAt = start
         isRunning = true
-        status = "訳文を準備しています"
+        status = selectedEngine == .plamo ? "PLaMoを準備しています" : "訳文を準備しています"
         persistSettings()
         work = Task { [weak self] in
             guard let self else { return }
@@ -154,6 +178,7 @@ final class AppModel: ObservableObject {
     }
 
     func persistSettings() {
+        guard !previewMode else { return }
         let defaults = UserDefaults.standard
         defaults.set(engineKind.rawValue, forKey: "engine")
         defaults.set(ollamaModel, forKey: "ollamaModel")
@@ -187,7 +212,7 @@ final class AppModel: ObservableObject {
         let nsError = error as NSError
         if nsError.domain == NSURLErrorDomain {
             if nsError.code == NSURLErrorCannotConnectToHost {
-                return "Ollamaに接続できません。Ollamaを起動して、モデル名を確認してください。"
+                return engineKind == .plamo ? "PLaMoとの接続が切れました。もう一度翻訳してください。" : "Ollamaに接続できません。Ollamaを起動して、モデル名を確認してください。"
             }
             if nsError.code == NSURLErrorTimedOut { return "応答がタイムアウトしました。原文を短くして再試行してください。" }
         }

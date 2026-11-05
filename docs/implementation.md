@@ -5,7 +5,8 @@
 ## 現時点での構成
 
 - SwiftUI + AppKit、macOS 26以降、Apple Silicon。
-- 翻訳はFoundation ModelsのSystemLanguageModel。文章ごとに独立したセッションを使い、ストリーミングの累積スナップショットを専用ウィンドウへ反映する。
+- 2026-11-06、PLaMo 3 Translate 2B Q4_K_Mを標準エンジンに追加。設定画面からモデルとllama.cppを取得・SHA-256検証し、専用サーバーを自動起動する。PFML3のCompletionsストリームを訳文欄へ反映する。[導入ガイド](plamo.md)を参照。
+- Apple Intelligenceは任意のエンジンとして維持。Foundation ModelsのSystemLanguageModelを使い、文章ごとに独立したセッションを作る。
 - 任意でOllamaのローカルChat APIに対応。推論モデルの導入は自動で行わない。
 - Command+Jで選択テキストを取得（ユーザー指定により初期のControl+Option+Tから変更）。設定でControl+Option+T／R／Yにも変更可能。Carbonの登録型ホットキーを使い、通常のキー入力は監視しない。
 - AXUIElementでの選択取得、任意の自動コピー補助、NSPasteboardからの手動貼り付け、NSServiceの受信経路。
@@ -13,7 +14,7 @@
 - 呼び出し元のデスクトップへウィンドウを移動するよう、`moveToActiveSpace`を指定。`fullScreenAuxiliary`も指定し、ウィンドウのアクティブ化時に以前のデスクトップへ切り替わる動作を修正した（2026-11-05）。
 - 翻訳の中断、完了判定、エラー表示、コピー、モデル待ち時間の計測。
 - UserDefaultsで設定を保存。履歴は初期オフ、有効時のみApplication Support/Kotoba/history.jsonへ最大500件保存。
-- 外部パッケージ・Web UI・外部APIキーなし。
+- 外部Swiftパッケージ・Web UI・外部APIキーなし。PLaMoの推論バイナリは初回に別途取得する。
 
 ## 元の仕様案から変えた点
 

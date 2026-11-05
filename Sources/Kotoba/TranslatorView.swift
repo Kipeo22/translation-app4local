@@ -232,6 +232,9 @@ struct TranslatorView: View {
                     if let reason = model.engine.availabilityMessage {
                         Text(reason).foregroundStyle(.orange)
                     }
+                } else if model.engineKind == .plamo {
+                    PlamoSettingsView(installer: model.plamoInstaller)
+                        .disabled(model.isRunning)
                 } else {
                     TextField("ローカルモデル名", text: $model.ollamaModel)
                     Text("Ollamaとモデルの導入が必要です。接続先はこのMac（127.0.0.1）のみです。")
